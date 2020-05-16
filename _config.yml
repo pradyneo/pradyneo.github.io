@@ -28,6 +28,7 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://pradyneo.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: pradyneo
 github_username:  pradyneo
+github: [metadata]
 repository: "pradyneo/pradyneo.github.io"
 permalink: none
 
