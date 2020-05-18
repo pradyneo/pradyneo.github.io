@@ -18,19 +18,19 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Prady's Blog
+title: "Prady's Blog"
 email: prady@tuta.io
-description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+name: "Prady Neog"
+description: "A personal blog site containing technical information."
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://pradyneo.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+logo: /android-chrome-192x192.png
 twitter_username: pradyneo
 github_username:  pradyneo
 github: [metadata]
 repository: "pradyneo/pradyneo.github.io"
 permalink: none
+breadcrumbs: true
 
 # Build settings
 #theme: minimal-mistakes-jekyll
@@ -43,6 +43,7 @@ timezone: America/New_York
 plugins:
   - jekyll-feed
   - jekyll-include-cache
+  - jekyll-archives
 
 defaults:
 # _posts
@@ -54,6 +55,8 @@ defaults:
     read_time: true
     #related: true
     share: true
+    permalink: /:categories/:title/
+
 #_pages
 - scope:
     path: ""
