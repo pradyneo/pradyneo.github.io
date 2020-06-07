@@ -3,7 +3,6 @@ layout: single
 title: Getting the Total Number of Files/Folders in a Unix/Linux System Directory
 author: "Prady"
 category: "Unix"
-classes: wide
 ---
 {: .text-justify}
 There are times when we want to count the number of the files or folders in a directory. We can use the below trick to get that information. 
