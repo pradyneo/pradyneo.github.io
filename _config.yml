@@ -18,7 +18,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: "Prady's Blog"
+title: "Prady's XYZ"
 email: prady@tuta.io
 name: "Prady Neog"
 description: "A personal blog site containing technical information."
