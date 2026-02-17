@@ -24,7 +24,7 @@ export function Footer() {
             <Twitter className="h-4 w-4" />
           </a>
           <a
-            href="mailto:prady@tuta.io"
+            href="mailto:hello@prady.xyz"
             className="flex h-9 w-9 items-center justify-center rounded-full border border-border/60 text-muted-foreground transition-colors hover:bg-foreground hover:text-background"
             aria-label="Email"
           >
