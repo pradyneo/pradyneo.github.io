@@ -3,7 +3,6 @@
 node_modules
 .env.local
 .env.*.local
-_*
 404*
 about*
 blog/
