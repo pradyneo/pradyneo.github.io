@@ -1,11 +1,7 @@
 # Next.js
-.next
 node_modules
 .env.local
 .env.*.local
-404*
-about*
-blog/
 
 # OS
 .DS_Store
