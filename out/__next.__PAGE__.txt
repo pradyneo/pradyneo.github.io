@@ -1,12 +1,108 @@
 1:"$Sreact.fragment"
-2:I[63780,["/_next/static/chunks/97fc986d518903ff.js","/_next/static/chunks/44b7d98ef68af9da.js"],"Navbar"]
-3:I[98924,["/_next/static/chunks/97fc986d518903ff.js","/_next/static/chunks/44b7d98ef68af9da.js"],"HeroSection"]
-4:I[4008,["/_next/static/chunks/97fc986d518903ff.js","/_next/static/chunks/44b7d98ef68af9da.js"],"AboutSection"]
-5:I[51585,["/_next/static/chunks/97fc986d518903ff.js","/_next/static/chunks/44b7d98ef68af9da.js"],"RecentPosts"]
-7:I[40018,["/_next/static/chunks/97fc986d518903ff.js","/_next/static/chunks/44b7d98ef68af9da.js"],"InfoWidgets"]
-c:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/d2be314c3ece3fbe.js"],"OutletBoundary"]
-d:"$Sreact.suspense"
-6:T666,Do you want your terminal to look sleek and modern? Follow this guide to configure your macOS terminal with iTerm2, Oh-My-Zsh, and the PowerLevel10k theme.
+2:I[63780,["/_next/static/chunks/373ff941764adb97.js","/_next/static/chunks/bf1a85ac2cfe79e0.js"],"Navbar"]
+3:I[98924,["/_next/static/chunks/373ff941764adb97.js","/_next/static/chunks/bf1a85ac2cfe79e0.js"],"HeroSection"]
+4:I[4008,["/_next/static/chunks/373ff941764adb97.js","/_next/static/chunks/bf1a85ac2cfe79e0.js"],"AboutSection"]
+5:I[51585,["/_next/static/chunks/373ff941764adb97.js","/_next/static/chunks/bf1a85ac2cfe79e0.js"],"RecentPosts"]
+d:I[40018,["/_next/static/chunks/373ff941764adb97.js","/_next/static/chunks/bf1a85ac2cfe79e0.js"],"InfoWidgets"]
+e:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/d2be314c3ece3fbe.js"],"OutletBoundary"]
+f:"$Sreact.suspense"
+6:T116b,So you’ve installed an AI CLI tool. Now what?
+
+## Talking to AI from the terminal
+
+The terminal is already where you talk to computers in half-sentences and cryptic flags; adding AI there just means you finally get to be vague on purpose.
+
+A typical AI CLI is a small wrapper around an API from a model provider (OpenAI, Anthropic, Perplexity, etc.). It takes your prompt, turns it into a request to the model, and prints the response back to stdout like any other Unix tool.
+
+At a high level, the flow looks like this:
+
+- You type: `ai "Write a git commit message summarizing these changes"` and pipe in `git diff`.
+- The CLI converts your input into JSON, adds some config (model, temperature, max tokens).
+- It sends that to the remote model.
+- The response comes back as text, which the CLI prints or streams line by line.
+
+No browser tabs, no “loading…” spinners, just your shell and a fast typist who never gets wrist pain.
+
+## What are “tokens” and why should you care?
+
+Models don’t see text the way you do. They see it as **tokens**: chunks of characters that are somewhere between a character and a word. For English, a rough mental model is:
+
+- 1 token ≈ 3–4 characters
+- 100 tokens ≈ a short paragraph
+- 1,000 tokens ≈ about a page of text
+
+Every request to an AI model is billed and limited in tokens, not characters:
+
+- Input tokens: your prompt (plus any system instructions and history).
+- Output tokens: the model’s reply.
+- Total tokens: input + output, which must fit under the model’s context window (for example, 8k, 32k, 200k tokens, depending on the model).
+
+This is why some CLIs show a little `prompt: 350 tokens, completion: 200 tokens` footer. It’s not showing off; it’s letting you know:
+
+- Why your “simple” command suddenly got slow.
+- Why the API complained about context length.
+- Why your bill looks like it secretly includes a second Netflix subscription.
+
+If you’re scripting this, you’ll often want:
+
+- A way to cap max output tokens (to avoid essays when you asked for a one-liner).
+- A way to trim or summarize past conversation history to stay under limits.
+
+## What can you actually do with an AI CLI?
+
+The fun part is not typing to an AI; it’s wiring it into everything else.
+
+Some practical patterns:
+
+- Inline docs: `ai "Explain this function in plain English" < myfile.js`
+- Commit messages: `git diff | ai "Write a concise commit message."`
+- Shell-fu assistant: `ai "Give me a one-line bash command to find all .log files modified in the last 24 hours and delete them, but ask for confirmation first."`
+- Refactoring ideas: `ai "Suggest a more idiomatic version of this code" < handler.py`
+- Quick translators: `pbpaste | ai "Translate this to clear, simple English and keep it under 3 sentences."`
+
+Because the CLI just reads stdin and writes stdout, it plays nicely with your usual suspects:
+
+- `fd`, `rg`, `jq`, `xargs`, `pbpaste` / `pbcopy`, etc.
+- Shell scripts that turn into “AI macros” for your daily work.
+
+Example: a tiny helper that explains any error you paste in:
+
+```bash
+explain-error() {
+  pbpaste | ai "Explain this error and suggest concrete steps to fix it."
+}
+```
+
+Now your debugging buddy is one command away, and unlike Stack Overflow, it doesn’t close your question as “off-topic”.
+
+## Configuring an AI CLI (without losing your mind)
+
+Most tools follow the same pattern:
+
+- API key: from your provider, usually via an env var like `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`.
+- Model: a flag or config file, for example `--model gpt-4.1-mini` or similar.
+- Temperature: how “creative” the model is (lower for deterministic answers, higher for brainstorming).
+- Format: plain text by default; sometimes `--json` for structured output.
+
+A minimal `~/.ai/config` might look like:
+
+```toml
+provider = "openai"
+model = "gpt-4.1-mini"
+temperature = 0.3
+max_output_tokens = 512
+```
+
+Once this is set, your day-to-day usage becomes:
+
+- `ai "Summarize this log into 3 bullet points." < app.log`
+- `ai --json "Given this error trace, output a JSON object with fields: cause, file, line, suggested_fix." < trace.txt`
+
+From there, it’s just another tool in your terminal, like `grep` but less grumpy.
+
+***
+
+If this post felt suspiciously on-brand, concise, and oddly patient for something written after a long day of debugging shell scripts… let’s just say the author had some very capable “help” from the same kind of CLI it just described.7:T666,Do you want your terminal to look sleek and modern? Follow this guide to configure your macOS terminal with iTerm2, Oh-My-Zsh, and the PowerLevel10k theme.
 
 ## Install iTerm2
 
@@ -73,9 +169,10 @@ When you reopen iTerm2, you should be taken directly to the screen for configuri
 
 > **Note:** PowerLevel10k requires the Meslo Nerd Font patch, so be sure to accept when prompted.
 
-Navigate through the interactive window and select the options based on your preference.0:{"buildId":"RO95by5ik69G8cv2YZaFY","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"min-h-screen bg-background text-foreground","children":[["$","$L2",null,{}],["$","$L3",null,{}],["$","$L4",null,{}],["$","$L5",null,{"posts":[{"slug":"getting-total-files-in-a-unix-system","title":"Getting the Total Number of Files/Folders in a Unix/Linux System Directory","category":"Unix","date":"May 15, 2020","readTime":"1 min read","excerpt":"A quick command-line trick to count the number of files or folders in any directory using ls and wc.","content":"There are times when we want to count the number of the files or folders in a directory. We can use the below trick to get that information.\n\n## Command\n\n```bash\nls -1 | wc -l\n```\n\n## Explanation\n\nThe `ls` command will **list** all the files/folders in the current directory. When `-1` is added to the option, it lists one file/folder per line as below:\n\n```bash\nls -1\nfoo.txt\nbar.txt\n```\n\nThe `wc` command is the **word count** command in a Unix system. One of its options is `-l`, which counts the number of lines.\n\nThus, if we pipe the above two commands, the output of `ls -1` command (which lists the files/folders in the current directory) is taken as the input to the `wc -l` command (which counts the number of lines). Assuming `foo.txt` and `bar.txt` are the only files in the directory, the output of the above command will result as:\n\n```bash\nls -1 | wc -l\n2\n```"},{"slug":"install-oh-my-zsh","title":"iTerm2 + Oh-My-Zsh + PowerLevel10k","category":"Terminal","date":"Jun 6, 2020","readTime":"5 min read","excerpt":"A complete guide to configuring your macOS terminal with iTerm2, Oh-My-Zsh, and the PowerLevel10k theme for a beautiful and productive setup.","content":"$6"}]}],["$","$L7",null,{}],["$","footer",null,{"className":"border-t border-border/40 px-6 py-16","children":"$L8"}]]}],["$L9","$La"],"$Lb"]}],"loading":null,"isPartial":false}
-8:["$","div",null,{"className":"mx-auto flex max-w-4xl flex-col items-center gap-6","children":[["$","div",null,{"className":"flex items-center gap-4","children":[["$","a",null,{"href":"https://github.com/pradyneo","target":"_blank","rel":"noopener noreferrer","className":"flex h-9 w-9 items-center justify-center rounded-full border border-border/60 text-muted-foreground transition-colors hover:bg-foreground hover:text-background","aria-label":"GitHub","children":["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-github h-4 w-4","children":[["$","path","tonef",{"d":"M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"}],["$","path","9comsn",{"d":"M9 18c-4.51 2-5-2-7-2"}],"$undefined"]}]}],["$","a",null,{"href":"https://twitter.com/pradyneo","target":"_blank","rel":"noopener noreferrer","className":"flex h-9 w-9 items-center justify-center rounded-full border border-border/60 text-muted-foreground transition-colors hover:bg-foreground hover:text-background","aria-label":"Twitter","children":["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-twitter h-4 w-4","children":[["$","path","pff0z6",{"d":"M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"}],"$undefined"]}]}],["$","a",null,{"href":"mailto:prady@tuta.io","className":"flex h-9 w-9 items-center justify-center rounded-full border border-border/60 text-muted-foreground transition-colors hover:bg-foreground hover:text-background","aria-label":"Email","children":["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-mail h-4 w-4","children":[["$","rect","18n3k1",{"width":"20","height":"16","x":"2","y":"4","rx":"2"}],["$","path","1ocrg3",{"d":"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"}],"$undefined"]}]}]]}],["$","div",null,{"className":"text-center","children":[["$","p",null,{"className":"font-serif text-sm font-medium text-foreground","children":"Prady Neog"}],["$","p",null,{"className":"mt-1 text-xs text-muted-foreground","children":"A technical diary for the curious developer."}]]}]]}]
-9:["$","script","script-0",{"src":"/_next/static/chunks/97fc986d518903ff.js","async":true}]
-a:["$","script","script-1",{"src":"/_next/static/chunks/44b7d98ef68af9da.js","async":true}]
-b:["$","$Lc",null,{"children":["$","$d",null,{"name":"Next.MetadataOutlet","children":"$@e"}]}]
-e:null
+Navigate through the interactive window and select the options based on your preference.0:{"buildId":"hSmjIE-Fz3bwJEoRA59x6","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"min-h-screen bg-background text-foreground","children":[["$","$L2",null,{}],["$","$L3",null,{}],["$","$L4",null,{}],["$","$L5",null,{"posts":[{"slug":"ai-cli-intro","title":"Teaching Your Terminal to Talk: A Quick Intro to AI on the CLI","category":"AI","date":"Feb 16, 2026","readTime":"3 min read","excerpt":"You’ve wired an AI into your terminal, but now what? This post walks through how AI CLIs work under the hood, what “tokens” actually are (and why your bill cares about them), and how to plug models into everyday commands like git, grep, and your shell scripts to quietly outsource the boring parts of development.","content":"$6","status":"published"},{"slug":"install-oh-my-zsh","title":"iTerm2 + Oh-My-Zsh + PowerLevel10k","category":"Terminal","date":"Jun 5, 2020","readTime":"5 min read","excerpt":"A complete guide to configuring your macOS terminal with iTerm2, Oh-My-Zsh, and the PowerLevel10k theme for a beautiful and productive setup.","content":"$7","status":"published"},{"slug":"getting-total-files-in-a-unix-system","title":"Getting the Total Number of Files/Folders in a Unix/Linux System Directory","category":"Unix","date":"May 14, 2020","readTime":"1 min read","excerpt":"A quick command-line trick to count the number of files or folders in any directory using ls and wc.","content":"There are times when we want to count the number of the files or folders in a directory. We can use the below trick to get that information.\n\n## Command\n\n```bash\nls -1 | wc -l\n```\n\n## Explanation\n\nThe `ls` command will **list** all the files/folders in the current directory. When `-1` is added to the option, it lists one file/folder per line as below:\n\n```bash\nls -1\nfoo.txt\nbar.txt\n```\n\nThe `wc` command is the **word count** command in a Unix system. One of its options is `-l`, which counts the number of lines.\n\nThus, if we pipe the above two commands, the output of `ls -1` command (which lists the files/folders in the current directory) is taken as the input to the `wc -l` command (which counts the number of lines). Assuming `foo.txt` and `bar.txt` are the only files in the directory, the output of the above command will result as:\n\n```bash\nls -1 | wc -l\n2\n```","status":"published"}]}],"$L8","$L9"]}],["$La","$Lb"],"$Lc"]}],"loading":null,"isPartial":false}
+8:["$","$Ld",null,{}]
+9:["$","footer",null,{"className":"border-t border-border/40 px-6 py-16","children":["$","div",null,{"className":"mx-auto flex max-w-4xl flex-col items-center gap-6","children":[["$","div",null,{"className":"flex items-center gap-4","children":[["$","a",null,{"href":"https://github.com/pradyneo","target":"_blank","rel":"noopener noreferrer","className":"flex h-9 w-9 items-center justify-center rounded-full border border-border/60 text-muted-foreground transition-colors hover:bg-foreground hover:text-background","aria-label":"GitHub","children":["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-github h-4 w-4","children":[["$","path","tonef",{"d":"M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"}],["$","path","9comsn",{"d":"M9 18c-4.51 2-5-2-7-2"}],"$undefined"]}]}],["$","a",null,{"href":"https://twitter.com/pradyneo","target":"_blank","rel":"noopener noreferrer","className":"flex h-9 w-9 items-center justify-center rounded-full border border-border/60 text-muted-foreground transition-colors hover:bg-foreground hover:text-background","aria-label":"Twitter","children":["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-twitter h-4 w-4","children":[["$","path","pff0z6",{"d":"M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"}],"$undefined"]}]}],["$","a",null,{"href":"mailto:prady@tuta.io","className":"flex h-9 w-9 items-center justify-center rounded-full border border-border/60 text-muted-foreground transition-colors hover:bg-foreground hover:text-background","aria-label":"Email","children":["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-mail h-4 w-4","children":[["$","rect","18n3k1",{"width":"20","height":"16","x":"2","y":"4","rx":"2"}],["$","path","1ocrg3",{"d":"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"}],"$undefined"]}]}]]}],["$","div",null,{"className":"text-center","children":[["$","p",null,{"className":"font-serif text-sm font-medium text-foreground","children":"Prady Neog"}],["$","p",null,{"className":"mt-1 text-xs text-muted-foreground","children":"A technical diary for the curious developer."}]]}]]}]}]
+a:["$","script","script-0",{"src":"/_next/static/chunks/373ff941764adb97.js","async":true}]
+b:["$","script","script-1",{"src":"/_next/static/chunks/bf1a85ac2cfe79e0.js","async":true}]
+c:["$","$Le",null,{"children":["$","$f",null,{"name":"Next.MetadataOutlet","children":"$@10"}]}]
+10:null

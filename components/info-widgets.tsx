@@ -69,13 +69,13 @@ export function InfoWidgets() {
                   <span>Twitter</span>
                 </a>
                 <a
-                  href="mailto:prady@tuta.io"
+                  href="mailto:hello@prady.xyz"
                   className="group flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary transition-colors group-hover:bg-foreground group-hover:text-background">
                     <Mail className="h-3.5 w-3.5" />
                   </div>
-                  <span>prady@tuta.io</span>
+                  <span>hello@prady.xyz</span>
                 </a>
               </div>
             </FloatingWidget>
@@ -123,13 +123,13 @@ export function InfoWidgets() {
                 <div>
                   <p className="text-xs text-muted-foreground/60">Location</p>
                   <p className="mt-0.5 text-sm font-medium text-foreground">
-                    New York, USA
+                    Seattle, USA
                   </p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground/60">Timezone</p>
                   <p className="mt-0.5 text-sm font-medium text-foreground">
-                    EST (UTC-5)
+                    PST (UTC-8)
                   </p>
                 </div>
                 <div>
