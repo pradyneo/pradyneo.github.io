@@ -10,7 +10,7 @@ export default function HomePage() {
   const posts = getAllPosts()
 
   return (
-    <main>
+    <main className="min-h-screen bg-background text-foreground">
       <Navbar />
       <HeroSection />
       <AboutSection />
