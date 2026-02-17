@@ -6,9 +6,9 @@ import { Menu, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navLinks = [
-  { label: "About", href: "#about" },
-  { label: "Writing", href: "#writing" },
-  { label: "Contact", href: "#contact" },
+  { label: "About", href: "/#about" },
+  { label: "Writing", href: "/#writing" },
+  { label: "Contact", href: "/#contact" },
 ]
 
 export function Navbar() {
@@ -64,7 +64,7 @@ export function Navbar() {
             )}
           >
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.label}
                 href={link.href}
                 className={cn(
@@ -73,7 +73,7 @@ export function Navbar() {
                 )}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </div>
 
@@ -102,14 +102,14 @@ export function Navbar() {
         )}
       >
         {navLinks.map((link) => (
-          <a
+          <Link
             key={link.label}
             href={link.href}
             onClick={() => setMenuOpen(false)}
             className="text-3xl font-serif font-medium text-foreground transition-colors hover:text-muted-foreground"
           >
             {link.label}
-          </a>
+          </Link>
         ))}
       </div>
     </>
