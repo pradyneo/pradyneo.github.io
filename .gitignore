@@ -1,5 +1,9 @@
-_site
-.sass-cache
-.jekyll-cache
-.jekyll-metadata
-vendor
+# Next.js
+.next
+out
+node_modules
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
